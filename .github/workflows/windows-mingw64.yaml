@@ -13,9 +13,6 @@ on:
 jobs:
   build:
     runs-on: windows-2022
-    defaults:
-      run:
-        shell: msys2 {0}
     steps:
       - uses: actions/checkout@v2
       - uses: msys2/setup-msys2@v2
@@ -29,6 +26,4 @@ jobs:
             mingw-w64-x86_64-qt5-base
       - name: CI-Build
         run: |
-          echo 'Running in MSYS2!'
-          ls /bin
-          ./ci-build.sh
+          gcm msys2
