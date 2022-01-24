@@ -12,7 +12,12 @@ on:
 
 jobs:
   build:
+    strategy:
+      matrix:
+        CONFIGURATION: [Debug, Release]
     runs-on: windows-2022
+    env:
+      CONFIGURATION: ${{ matrix.CONFIGURATION }}
     defaults:
       run:
         shell: msys2 {0}
@@ -29,7 +34,7 @@ jobs:
             mingw-w64-x86_64-qt5-base
       - name: CI-Build
         run: |
-          echo $PATH
-          where gcc; which gcc
-          where cmake; which cmake
-          where ninja; which ninja
+          mkdir build
+          cd build
+          cmake .. -DCMAKE_BUILD_TYPE=${{ matrix.CONFIGURATION }} -G Ninja
+          ninja
