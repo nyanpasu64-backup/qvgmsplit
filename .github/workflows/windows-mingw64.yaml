@@ -46,10 +46,10 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-artifact@v2
         with:
-          name: qvgmsplit-${{ matrix.build }}-v${{ github.run_number }}-dev
+          name: qvgmsplit-${{ matrix.CONFIGURATION }}-v${{ github.run_number }}-dev
           path: archive-root/
       - name: Upload .pdb symbols
         uses: actions/upload-artifact@v2
         with:
-          name: qvgmsplit-${{ matrix.build }}-v${{ github.run_number }}-pdb
+          name: qvgmsplit-${{ matrix.CONFIGURATION }}-v${{ github.run_number }}-pdb
           path: build/qvgmsplit.pdb
