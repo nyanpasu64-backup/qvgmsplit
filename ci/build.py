@@ -68,7 +68,7 @@ def ARCHIVE():
     configuration = "" if CONFIGURATION == "Release" else f"-{CONFIGURATION}"
 
     # TODO indicate 32/64 and compiler/OS
-    return f"exotracker-v{APPVEYOR_BUILD_VERSION}{configuration}-dev"
+    return f"qvgmsplit-v{APPVEYOR_BUILD_VERSION}{configuration}-dev"
 
 
 ARCHIVE = ARCHIVE()
@@ -81,7 +81,8 @@ def resolve_compilers():
         os.environ[compiler] = shutil.which(path)
 
 
-BUILD_DIR = sanitize_path(f"build-{APPVEYOR_JOB_NAME}-{CONFIGURATION}")
+# BUILD_DIR = sanitize_path(f"build-{APPVEYOR_JOB_NAME}-{CONFIGURATION}")
+BUILD_DIR = "build"
 
 
 def build():
@@ -100,13 +101,8 @@ def build():
     run("ninja")
 
 
-def test():
-    os.chdir(BUILD_DIR)
-    run("exotracker-tests")
-
-
 ARCHIVE_ROOT = "archive-root"
-EXE_NAME = "exotracker-qt"
+EXE_NAME = "qvgmsplit"
 
 
 def archive():
@@ -124,9 +120,10 @@ def archive():
         shutil.copy(str(build_dir / in_file), Path(in_file).name)
 
     with pushd(ARCHIVE_ROOT):
-        # TODO branch on OS
-
-        copy_to_cwd(f"{EXE_NAME}.exe")
+        if sys.platform == "win32":
+            copy_to_cwd(build_dir, f"{EXE_NAME}.exe")
+        elif sys.platform.startswith("linux"):
+            copy_to_cwd(build_dir, EXE_NAME)
 
         # Archive Qt DLLs.
         run(
@@ -139,17 +136,6 @@ def archive():
 
         # Remove unnecessary Qt code.
         shutil.rmtree("imageformats")
-
-        # Create archive (CI artifact).
-        run("7z a -mx=3", shlex.quote(archive_name + ".7z"), ".")
-
-    # Visual Studio will not load .pdb files which have been renamed.
-    # So give the archive a different name, but preserve the name of the .pdb.
-    run(
-        "7z a -mx=3",
-        shlex.quote(archive_name + ".pdb.7z"),
-        quote_str(build_dir / f"{EXE_NAME}.pdb"),
-    )
 
 
 class DefaultHelpParser(argparse.ArgumentParser):
@@ -168,17 +154,14 @@ def main():
         subparsers.required = True
 
         parser_build = subparsers.add_parser("build")
-        parser_test = subparsers.add_parser("test")
         parser_archive = subparsers.add_parser("archive")
 
     f()
     args = parser.parse_args()
 
     if args.cmd == "build":
+        # Not currently used.
         build()
-
-    if args.cmd == "test":
-        test()
 
     if args.cmd == "archive":
         archive()

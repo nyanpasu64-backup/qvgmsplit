@@ -38,3 +38,16 @@ jobs:
           cd build
           cmake .. -DCMAKE_BUILD_TYPE=${{ matrix.CONFIGURATION }} -G Ninja
           ninja
+      - name: Package artifact
+        run: |
+          py -3 ci/build.py archive
+      - name: Upload artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: qvgmsplit-${{ matrix.build }}-v${{ github.run_number }}-dev
+          path: archive-root/
+      - name: Upload .pdb symbols
+        uses: actions/upload-artifact@v2
+        with:
+          name: qvgmsplit-${{ matrix.build }}-v${{ github.run_number }}-pdb
+          path: build/qvgmsplit.pdb
