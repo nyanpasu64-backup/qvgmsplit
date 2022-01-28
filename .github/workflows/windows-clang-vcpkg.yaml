@@ -24,11 +24,14 @@ jobs:
         shell: pwsh
     steps:
       - uses: actions/checkout@v2
-      - name: Run vcpkg
+      - name: Install dependencies
         run: |
+          choco install ninja &
           vcpkg install zlib
-          gcm vcpkg
-          clang --version
+          Get-Job | Wait-Job
+
+          #gcm vcpkg (C:\vcpkg)
+          #clang --version (C:\Program Files\LLVM\bin, 13.0.0)
       - name: CI-Build
         run: |
           mkdir build
