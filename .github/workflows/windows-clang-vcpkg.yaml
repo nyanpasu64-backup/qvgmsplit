@@ -18,7 +18,7 @@ jobs:
     runs-on: windows-2022
     env:
       CONFIGURATION: ${{ matrix.CONFIGURATION }}
-      VCPKG_TARGET_ARCHITECTURE: x64
+      VCPKG_DEFAULT_TRIPLET: x64-windows
     defaults:
       run:
         shell: pwsh
