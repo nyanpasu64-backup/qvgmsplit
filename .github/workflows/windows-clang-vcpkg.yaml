@@ -27,7 +27,7 @@ jobs:
       - name: Install dependencies
         run: |
           choco install ninja &
-          vcpkg install zlib qt5-base qt5-tools
+          vcpkg install zlib
           Get-Job | Wait-Job
 
           #gcm vcpkg (C:\vcpkg)
