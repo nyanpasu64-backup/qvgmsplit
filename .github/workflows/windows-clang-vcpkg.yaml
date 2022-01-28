@@ -32,6 +32,11 @@ jobs:
 
           #gcm vcpkg (C:\vcpkg)
           #clang --version (C:\Program Files\LLVM\bin, 13.0.0)
+      - name: Install Qt
+        uses: jurplel/install-qt-action@7933445fc5670b1ef4eeedb981cf8f14647f2e1a
+        with:
+          version: "5.15.2"
+          archives: "qtbase qttools"
       - name: CI-Build
         run: |
           mkdir build
