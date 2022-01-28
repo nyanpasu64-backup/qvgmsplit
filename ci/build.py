@@ -117,13 +117,16 @@ def archive():
         """Copies a file to the current directory without renaming it.
         Copying instead of renaming makes archive() idempotent
         and simplifies local testing."""
+        # TODO switch to two arguments
         shutil.copy(str(build_dir / in_file), Path(in_file).name)
 
     with pushd(ARCHIVE_ROOT):
         if sys.platform == "win32":
-            copy_to_cwd(build_dir, f"{EXE_NAME}.exe")
+            copy_to_cwd(f"{EXE_NAME}.exe")
         elif sys.platform.startswith("linux"):
-            copy_to_cwd(build_dir, EXE_NAME)
+            copy_to_cwd(EXE_NAME)
+        else:
+            raise Exception(f"unknown OS {sys.platform}, cannot determine binary name")
 
         # Archive Qt DLLs.
         run(
