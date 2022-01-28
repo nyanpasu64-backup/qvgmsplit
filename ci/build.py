@@ -134,13 +134,11 @@ def archive():
             f"{EXE_NAME}.exe",
             # "--verbose 2",
             # Reduce file size.
-            "--no-compiler-runtime --no-angle --no-opengl-sw",
+            "--no-compiler-runtime --no-svg --no-angle --no-opengl-sw",
         )
 
         # Remove unnecessary Qt code.
-        for path in Path("imageformats").iterdir():
-            if not path.name.startswith("qsvg"):
-                path.unlink()
+        shutil.rmtree("imageformats")
 
         # Create archive (CI artifact).
         run("7z a -mx=3", shlex.quote(archive_name + ".7z"), ".")
