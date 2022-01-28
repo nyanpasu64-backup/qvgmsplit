@@ -1,4 +1,4 @@
-name: Windows MinGW64
+name: Windows Clang vcpkg
 
 on:
   push:
@@ -18,27 +18,27 @@ jobs:
     runs-on: windows-2022
     env:
       CONFIGURATION: ${{ matrix.CONFIGURATION }}
+      VCPKG_TARGET_ARCHITECTURE: x64
     defaults:
       run:
-        shell: msys2 {0}
+        shell: pwsh
     steps:
       - uses: actions/checkout@v2
-      - uses: msys2/setup-msys2@v2
-        with:
-          msystem: MINGW64
-          update: true
-          # mingw-w64-x86_64-qt5-tools supplies windeployqt
-          install: >-
-            mingw-w64-x86_64-gcc
-            mingw-w64-x86_64-cmake
-            mingw-w64-x86_64-ninja
-            mingw-w64-x86_64-qt5-base
-            mingw-w64-x86_64-qt5-tools
+      - name: Run vcpkg
+        run: |
+          vcpkg install zlib
+          gcm vcpkg
+          clang --version
       - name: CI-Build
         run: |
           mkdir build
           cd build
-          cmake .. -DCMAKE_BUILD_TYPE=${{ matrix.CONFIGURATION }} -G Ninja
+          cmake .. `
+            -D CMAKE_TOOLCHAIN_FILE=C:\vcpkg\scripts\buildsystems\vcpkg.cmake `
+            -D CMAKE_C_COMPILER=clang `
+            -D CMAKE_CXX_COMPILER=clang++ `
+            -DCMAKE_BUILD_TYPE=${{ matrix.CONFIGURATION }} `
+            -G Ninja
           ninja
       - name: Package artifact
         run: |
