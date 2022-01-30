@@ -58,9 +58,9 @@ jobs:
         with:
           name: qvgmsplit-${{ matrix.CONFIGURATION }}-v${{ github.run_number }}-dev
           path: archive-root/
-      - name: Debug
-        shell: cmd
-        run: tree /f
+      - name: Test app to ensure it runs
+        run: |
+          archive-root/qvgmsplit --exit-immediately
       - name: Upload .pdb symbols
         uses: actions/upload-artifact@v2
         with:
