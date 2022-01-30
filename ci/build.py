@@ -140,6 +140,14 @@ def archive():
         # Remove unnecessary Qt code.
         shutil.rmtree("imageformats")
 
+        # I'm not sure where it comes from. I assume CMake copies it
+        # from vcpkg to the build directory at some point. Anyway let's
+        # use it.
+        if CONFIGURATION == "Debug":
+            copy_to_cwd("zlibd1.dll")
+        else:
+            copy_to_cwd("zlib1.dll")
+
 
 class DefaultHelpParser(argparse.ArgumentParser):
     def error(self, message):
