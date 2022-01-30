@@ -16,6 +16,7 @@ jobs:
     strategy:
       matrix:
         CONFIGURATION: [Debug, Release]
+      fail-fast: false
     runs-on: windows-2022
     env:
       CONFIGURATION: ${{ matrix.CONFIGURATION }}
