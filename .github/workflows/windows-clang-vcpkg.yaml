@@ -29,15 +29,20 @@ jobs:
     env:
       CONFIGURATION: ${{ matrix.CONFIGURATION }}
       VCPKG_DEFAULT_TRIPLET: x64-windows
+      BUILD_NAME: build${{ github.run_number }}
     defaults:
       run:
         shell: pwsh
     steps:
       - uses: actions/checkout@v2
+      - name: Identify tags
+        if: ${{ github.ref_type == 'tag' }}
+        run: |
+          echo "BUILD_NAME=${{ github.ref_name }}" >> $Env:GITHUB_ENV
       - name: Identify pull request
         if: ${{ github.event_name == 'pull_request' }}
         run: |
-          echo "PR_NAME=-pr${{ github.event.number }}-${{ github.head_ref }}" >> $Env:GITHUB_ENV
+          echo "BUILD_NAME=${{ env.BUILD_NAME }}-pr${{ github.event.number }}-${{ github.head_ref }}" >> $Env:GITHUB_ENV
       - name: Install dependencies
         run: |
           choco install ninja &
@@ -69,7 +74,7 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-artifact@v2
         with:
-          name: qvgmsplit-build${{ github.run_number }}${{ env.PR_NAME }}-${{ matrix.CONFIGURATION }}-exe
+          name: qvgmsplit-${{ env.BUILD_NAME }}-${{ matrix.CONFIGURATION }}-exe
           path: archive-root/
       - name: Test app to ensure it runs
         run: |
@@ -77,5 +82,5 @@ jobs:
       - name: Upload .pdb symbols
         uses: actions/upload-artifact@v2
         with:
-          name: qvgmsplit-build${{ github.run_number }}${{ env.PR_NAME }}-${{ matrix.CONFIGURATION }}-pdb
+          name: qvgmsplit-${{ env.BUILD_NAME }}-${{ matrix.CONFIGURATION }}-pdb
           path: build/qvgmsplit.pdb
